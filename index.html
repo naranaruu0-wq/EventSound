@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventSound 🏆 – Sistem Manajemen Sewa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* BASE & THEME STYLES */
+        :root {
+            --primary-light: #f5eefd; /* Soft Pink-Purple Background */
+            --primary-dark: #6a3a9f;  /* Deep Purple Accent */
+            --secondary-pink: #d8a0c7; /* Soft Pink Accent */
+            --text-dark: #333;
+            --text-light: #fff;
+            --success-green: #90d39f; /* Pastel Green Button */
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #ecdcdc 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--primary-dark);
+            background-color: var(--primary-light);
+            box-shadow: 0 4px 6px var(--shadow-light);
+            margin-bottom: 20px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.8em;
+        }
+
+        section {
+            background-color: var(--text-light);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 6px 15px var(--shadow-light);
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--secondary-pink);
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-weight: 600;
+        }
+
+        /* FORM STYLES */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        input[type="text"], input[type="date"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-dark);
+            outline: none;
+        }
+
+        /* BUTTON STYLES (Pastel Green) */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--text-light);
+            background-color: var(--success-green);
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: #79c086;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: #e76c7f;
+            margin-top: 15px;
+        }
+        .btn-danger:hover {
+            background-color: #d15668;
+        }
+
+        /* PRICE DISPLAY */
+        #harga-paket {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--secondary-pink);
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* PACKAGE DETAILS STYLES */
+        .package-details {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-pink);
+        }
+        .package-details p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* ORDER LIST STYLES */
+        .order-card {
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            border-left: 5px solid var(--secondary-pink);
+            box-shadow: 0 2px 5px var(--shadow-light);
+        }
+        .order-card p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+        .order-card strong {
+            color: var(--primary-dark);
+        }
+        .order-list-empty {
+            text-align: center;
+            color: #999;
+            padding: 30px 0;
+        }
+
+        /* MODAL (POPUP) STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: var(--text-light);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+        }
+
+        .struk-header {
+            text-align: center;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #ccc;
+        }
+        .struk-header h3 {
+            margin: 5px 0;
+            color: var(--primary-dark);
+        }
+        .struk-detail p {
+            border-bottom: 1px dotted #eee;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .struk-detail p strong {
+            text-align: right;
+        }
+        .struk-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            text-align: center;
+            border-top: 2px dashed #ccc;
+        }
+        .struk-footer p {
+            font-style: italic;
+            color: var(--primary-dark);
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* PRINT STYLES */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal-content, .modal-content * {
+                visibility: visible;
+            }
+            .modal {
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 0;
+                background-color: transparent;
+            }
+            .modal-content {
+                margin: 0;
+                width: 100%;
+                max-width: none;
+                box-shadow: none;
+                border: none;
+            }
+            .btn-print, .close-btn {
+                display: none;
+            }
+        }
+
+        /* RESPONSIVENESS */
+        @media (min-width: 600px) {
+            header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 EventSound</h1>
+            <p>Sistem Manajemen Sewa Sound System</p>
+        </header>
+
+        <section id="form-pemesanan">
+            <h2>Pesan Layanan Sound System</h2>
+            <form id="booking-form">
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" required>
+                </div>
+                <div class="form-group">
+                    <label for="hp">Nomor HP</label>
+                    <input type="number" id="hp" required pattern="[0-9]*" title="Masukkan hanya angka">
+                </div>
+                <div class="form-group">
+                    <label for="tanggal">Tanggal Acara</label>
+                    <input type="date" id="tanggal" required>
+                </div>
+                <div class="form-group">
+                    <label for="alamat">Alamat Acara</label>
+                    <textarea id="alamat" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="paket">Pilihan Paket</label>
+                    <select id="paket" required onchange="updatePrice()">
+                        <option value="" disabled selected>Pilih Paket</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Standar">Standar</option>
+                        <option value="Premium">Premium</option>
+                    </select>
+                </div>
+
+                <div id="harga-paket">Pilih Paket untuk Melihat Harga</div>
+                <div id="paket-fasilitas" class="package-details" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label for="metode">Metode Pembayaran</label>
+                    <select id="metode" required>
+                        <option value="Tunai">Tunai</option>
+                        <option value="QRIS">QRIS</option>
+                        <option value="Transfer Bank">Transfer Bank</option>
+                        <option value="Dana">Dana</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">Konfirmasi Pesanan</button>
+            </form>
+        </section>
+
+        <section id="daftar-pesanan">
+            <h2>Daftar Pesanan Saya</h2>
+            <div id="order-list">
+                <p class="order-list-empty">Belum ada pesanan yang tersimpan.</p>
+            </div>
+            <button id="hapus-semua" class="btn btn-danger" style="display: none;">Hapus Semua Pesanan</button>
+        </section>
+    </div>
+
+    <div id="strukModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="struk-header">
+                <h3>STRUK KONFIRMASI PEMESANAN</h3>
+                <p>EventSound - Sewa Sound System Kudus</p>
+            </div>
+            <div id="struk-details" class="struk-detail">
+                </div>
+            <div class="struk-footer">
+                <p>"Terima kasih telah menggunakan layanan Sewa Sound System Kudus."</p>
+                <button id="cetak-struk-btn" class="btn btn-print">Cetak Struk</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DETAIL PAKET & HARGA
+        const paketData = {
+            Basic: {
+                harga: 1800000,
+                fasilitas: "2 sound system aktif, 1 mixer kecil, 2 mic wireless, teknisi onsite (4 jam)."
+            },
+            Standar: {
+                harga: 3500000,
+                fasilitas: "4 sound system aktif, mixer besar, 4 mic wireless, kabel lengkap, teknisi profesional, lampu panggung dasar (6 jam)."
+            },
+            Premium: {
+                harga: 7000000,
+                fasilitas: "8 sound system aktif, subwoofer, mixer digital, 6 mic wireless, monitor stage, teknisi full crew, lampu lighting lengkap, genset cadangan (full day)."
+            }
+        };
+
+        const form = document.getElementById('booking-form');
+        const paketSelect = document.getElementById('paket');
+        const hargaDisplay = document.getElementById('harga-paket');
+        const fasilitasDisplay = document.getElementById('paket-fasilitas');
+        const orderList = document.getElementById('order-list');
+        const hapusSemuaBtn = document.getElementById('hapus-semua');
+        const strukModal = document.getElementById('strukModal');
+        const strukDetails = document.getElementById('struk-details');
+        const cetakStrukBtn = document.getElementById('cetak-struk-btn');
+
+        // FUNGSI UTAMA
+        
+        // 1. FORMAT RUPIAH
+        const formatRupiah = (angka) => {
+            return "Rp " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        };
+
+        // 2. UPDATE HARGA DAN FASILITAS
+        const updatePrice = () => {
+            const selectedPackage = paketSelect.value;
+            if (selectedPackage && paketData[selectedPackage]) {
+                const data = paketData[selectedPackage];
+                hargaDisplay.textContent = formatRupiah(data.harga);
+                fasilitasDisplay.innerHTML = `<strong>Fasilitas:</strong><p>${data.fasilitas}</p>`;
+                fasilitasDisplay.style.display = 'block';
+                hargaDisplay.style.color = 'var(--primary-dark)';
+            } else {
+                hargaDisplay.textContent = "Pilih Paket untuk Melihat Harga";
+                hargaDisplay.style.color = 'var(--secondary-pink)';
+                fasilitasDisplay.style.display = 'none';
+            }
+        };
+        
+        // Pastikan harga update saat halaman dimuat (jika ada nilai default)
+        document.addEventListener('DOMContentLoaded', updatePrice);
+
+
+        // 3. VALIDASI FORM & SIMPAN PESANAN
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Sederhana: Validasi tanggal tidak lampau
+            const tglAcara = document.getElementById('tanggal').value;
+            const today = new Date().toISOString().split('T')[0];
+            if (tglAcara < today) {
+                alert('Tanggal acara tidak boleh di masa lalu.');
+                return;
+            }
+
+            const selectedPackage = paketSelect.value;
+            if (!selectedPackage) {
+                alert('Silakan pilih paket layanan terlebih dahulu.');
+                return;
+            }
+
+            const harga = paketData[selectedPackage].harga;
+            const fasilitas = paketData[selectedPackage].fasilitas;
+            
+            const newOrder = {
+                id: Date.now(),
+                nama: document.getElementById('nama').value,
+                hp: document.getElementById('hp').value,
+                tanggal: tglAcara,
+                alamat: document.getElementById('alamat').value,
+                paket: selectedPackage,
+                fasilitas: fasilitas,
+                metode: document.getElementById('metode').value,
+                harga: harga
+            };
+
+            // Simpan ke localStorage
+            let orders = JSON.parse(localStorage.getItem('eventSoundOrders')) || [];
+            orders.push(newOrder);
+            localStorage.setItem('eventSoundOrders', JSON.stringify(orders));
+
+            displayOrders();
+            showStruk(newOrder);
+            form.reset(); // Reset form setelah sukses
+            updatePrice(); // Reset harga display
+
+        });
+
+        // 4. TAMPILKAN STRUK
+        const showStruk = (order) => {
+            const tgl = new Date(order.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            strukDetails.innerHTML = `
+                <p>Nama Penyewa: <strong>${order.nama}</strong></p>
+                <p>Nomor HP: <strong>${order.hp}</strong></p>
+                <p>Paket Layanan: <strong>${order.paket}</strong></p>
+                <p>Fasilitas: <span>${order.fasilitas}</span></p>
+                <p>Tanggal Acara: <strong>${tgl}</strong></p>
+                <p>Alamat Acara: <span>${order.alamat}</span></p>
+                <p>Metode Bayar: <strong>${order.metode}</strong></p>
+                <p style="font-size: 1.2em; font-weight: 700;">Total Harga: <strong style="color: var(--secondary-pink);">${formatRupiah(order.harga)}</strong></p>
+            `;
+            strukModal.style.display = 'block';
+        };
+
+        // Close Modal
+        document.querySelector('.close-btn').onclick = () => {
+            strukModal.style.display = 'none';
+        }
+        window.onclick = (event) => {
+            if (event.target == strukModal) {
+                strukModal.style.display = "none";
+            }
+        }
+        
+        // Tombol Cetak Struk
+        cetakStrukBtn.onclick = () => {
+            window.print();
+        };
+
+        // 5. TAMPILKAN DAFTAR PESANAN
+        const displayOrders = () => {
+            const orders = JSON.parse(localStorage.getItem('eventSoundOrders')) || [];
+            orderList.innerHTML = '';
+
+            if (orders.length === 0) {
+                orderList.innerHTML = '<p class="order-list-empty">Belum ada pesanan yang tersimpan.</p>';
+                hapusSemuaBtn.style.display = 'none';
+                return;
+            }
+
+            orders.forEach(order => {
+                const tgl = new Date(order.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                const card = document.createElement('div');
+                card.className = 'order-card';
+                card.innerHTML = `
+                    <p><strong>ID Pesanan:</strong> ${order.id}</p>
+                    <p><strong>Nama:</strong> ${order.nama}</p>
+                    <p><strong>Paket:</strong> ${order.paket} (${formatRupiah(order.harga)})</p>
+                    <p><strong>Tanggal:</strong> ${tgl}</p>
+                    <p><strong>Alamat:</strong> ${order.alamat}</p>
+                    <p><strong>Metode Bayar:</strong> ${order.metode}</p>
+                `;
+                orderList.appendChild(card);
+            });
+
+            hapusSemuaBtn.style.display = 'block';
+        };
+
+        // 6. HAPUS SEMUA PESANAN
+        hapusSemuaBtn.addEventListener('click', () => {
+            if (confirm('Anda yakin ingin menghapus SEMUA data pesanan? Tindakan ini tidak dapat dibatalkan.')) {
+                localStorage.removeItem('eventSoundOrders');
+                displayOrders();
+            }
+        });
+
+        // Muat data pesanan saat halaman pertama kali dibuka
+        document.addEventListener('DOMContentLoaded', displayOrders);
+
+    </script>
+</body>
+  </html>
